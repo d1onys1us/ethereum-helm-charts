@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{.Release.Namespace}}
+  name: taiko-node
+  labels:
+    app: taiko-node
+spec:
+  serviceName: taiko-node
+  replicas: 1
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: taiko-node
+  volumeClaimTemplates:
+  - metadata:
+      name: taiko-data
+    spec:
+      storageClassName: {{.Values.l2.el.storageClassName}}
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{.Values.l2.el.storage}}
+  template:
+    metadata:
+      labels:
+        app: taiko-node
+    spec:
+      volumes:
+      - name: jwtsecret
+        secret:
+          secretName: jwtsecret
+      containers:
+      #### Taiko node
+      - name: taiko
+        image: "us-docker.pkg.dev/evmchain/{{.Values.l2.el.imageRepo}}/taiko-node:{{.Values.l2.el.tag}}"
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - |
+          geth \
+            --datadir=/taiko/data \
+            --port=30303 \
+            --http \
+            --http.addr 0.0.0.0 \
+            --http.port 8545 \
+            --http.vhosts "*" \
+            --http.corsdomain "*" \
+            --http.api net,eth,web3,txpool,debug,taiko \
+            --ws \
+            --ws.addr 0.0.0.0 \
+            --ws.port 8546 \
+            --ws.origins "*" \
+            --ws.api eth,net,web3,txpool,debug,taiko \
+            --metrics \
+            --metrics.port 6060 \
+            --metrics.addr 0.0.0.0 \
+            --cache 4096 \
+            --maxpeers 50 \
+            --syncmode snap \
+            --gcmode archive \
+            --snapshot \
+            --log.rotate \
+            --log.compress \
+            --log.maxsize 10 \
+            --log.maxage 10 \
+            --log.format logfmt \
+            --authrpc.addr 0.0.0.0 \
+            --authrpc.port 8551 \
+            --authrpc.jwtsecret /jwtsecret/default \
+            --authrpc.vhosts "*" \
+            --discv5 \
+            --allow-insecure-unlock \
+            --networkid={{.Values.l2.networkId}} \
+            --nat "extip:$(POD_IP)" \
+            --bootnodes "{{.Values.l2.el.bootnodes}}" \
+            --taiko 2>&1
+        ports:
+          - containerPort: 8545
+          - containerPort: 8546
+          - containerPort: 8551
+          - containerPort: 6060
+          - containerPort: 30303
+          - containerPort: 30303
+            protocol: UDP
+        volumeMounts:
+          - name: taiko-data
+            mountPath: /taiko/data
+          - name: jwtsecret
+            mountPath: /jwtsecret
+            readOnly: true
+        resources:
+          requests:
+            cpu: {{.Values.l2.el.cpuRequest}}
+            memory: {{.Values.l2.el.memoryRequest}}
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8545
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          failureThreshold: 3
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "geth attach --datadir=/taiko/data --exec 'eth && !eth.syncing' | grep true"
+      - name: driver
+        image: "us-docker.pkg.dev/evmchain/{{.Values.l2.el.imageRepo}}/taiko-client:{{.Values.l2.driver.tag}}"
+        volumeMounts:
+          - name: jwtsecret
+            mountPath: /jwtsecret
+            readOnly: true
+        args:
+          - driver
+          - --l1.ws=ws://ethereum-node-holesky-execution:8545
+          - --l1.beacon=http://ethereum-node-holesky-beacon:5052
+          - --l2.ws=ws://localhost:8546
+          - --l2.auth=http://localhost:8551
+          - --taikoL1={{.Values.l1.contractAddresses.taikoL1}}
+          - --taikoL2={{.Values.l2.contractAddresses.taikoL2}}
+          - --jwtSecret=/jwtsecret/default
+          - --p2p.sync
+          - --p2p.checkPointSyncUrl={{.Values.l2.driver.checkPointUrl}}
+          - --verbosity=3
+        resources:
+          requests:
+            cpu: {{.Values.l2.driver.cpuRequest}}
+            memory: {{.Values.l2.driver.memoryRequest}}
+

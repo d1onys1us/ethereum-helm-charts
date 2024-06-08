@@ -1,0 +1,55 @@
+gamespace: "hekla"
+
+l1:
+  network: "holesky"
+  contractAddresses:
+    taikoL1: "0x79C9109b764609df928d16fC4a91e9081F7e87DB"
+    taikoToken: "0x6490E12d480549D333499236fF2Ba6676C296011"
+    guardianProverMinority: "0x31d4d27da5c299d4b6CE19c869B8891C0002795d"
+    guardianProverMajority: "0x92F195a8702da2104aE8E3E10779176E7C35d6BC"
+    assignmentHook: "0x9e640a6aadf4f664CF467B795c31332f44AcBe6c"
+  cl:
+    tag: "v5.1.3"
+    checkpointSyncUrl: "https://checkpoint-sync.holesky.ethpandaops.io"
+    cpuRequest: "3"
+    memoryRequest: "24Gi"
+    storage: "1Ti"
+    storageClassName: "local-path"
+  el:
+    tag: "v1.14.3"
+    stateScheme: "path"
+    cpuRequest: "2"
+    memoryRequest: "12Gi"
+    storage: "1Ti"
+    storageClassName: "local-path"
+
+l2:
+  contractAddresses:
+    taikoL2: "0x1670090000000000000000000000000000010001"
+  networkId: "167009"
+  el:
+    imageRepo: "hekla"
+    tag: "sha-2bd866e"
+    bootnodes: "enode://2f7ee605f84362671e7d7c6d47b69a3358b0d87e9ba4648befcae8b19453275ed19059db347c459384c1a3e5486419233c06bf6c4c6f489d81ace6f301a2a446@43.153.55.134:30303,enode://c067356146268d2855ad356c1ce36ba9f78c1633a72f9b7f686679c2ffe04bab6d24e48ef6eefb0e01aa00dff5024f7f94bc583da90b6027f40be4129bbbc5fd@43.153.90.191:30303,enode://acc2bdb6416feddff9734bee1e6de91e684e9df5aeb1d36698cc78b920600aed36a2871e4ad0cf4521afcdc2cde8e2cd410a57038767c356d4ce6c69b9107a5a@170.106.109.12:30303,enode://eb5079aae185d5d8afa01bfd2d349da5b476609aced2b57c90142556cf0ee4a152bcdd724627a7de97adfc2a68af5742a8f58781366e6a857d4bde98de6fe986@34.66.210.65:30303,enode://2294f526cbb7faa778192289c252307420532191438ce821d3c50232e019a797bda8c8f8541de0847e953bb03096123856935e32294de9814d15d120131499ba@34.72.186.213:30303"
+    cpuRequest: "2"
+    memoryRequest: "4Gi"
+    storage: "500Gi"
+    storageClassName: "local-path"
+  driver:
+    imageRepo: "hekla"
+    tag: "sha-9a72cf0"
+    checkPointUrl: "https://rpc.hekla.taiko.xyz"
+    cpuRequest: "1"
+    memoryRequest: "500Mi"
+  guardian:
+    imageRepo: "hekla"
+    tag: "sha-9a72cf0"
+    healthCheckserver: https://guardian-prover-health-check.hekla.taiko.xyz
+    gasLimit: "2000000"
+    cpuRequest: "1"
+    memoryRequest: "1Gi"
+
+secret:
+  jwtSecret: "0b8f2d159b56b5a3ad139821f64fd3511e4a9842f06df681289e4ec9e6b56863"
+  guardianProverPrivateKey: ""
+
