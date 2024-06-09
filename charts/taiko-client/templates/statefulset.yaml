@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "taiko-client.fullname" . }}
+  labels:
+    {{- include "taiko-client.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  serviceName: taiko-client
+  replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: taiko-client
+  template:
+    metadata:
+      labels:
+        app: taiko-client
+    spec:
+      volumes:
+      - name: jwtsecret
+        secret:
+        secretName: {{ include "taiko-client.fullname" . }}-jwt
+      containers:
+      - name: {{ printf "taiko-client-%s" .Values.global.mode }}
+        image: "us-docker.pkg.dev/evmchain/{{ with (index .Values .Values.global.network) }}{{ .image.repo }}/taiko-client:{{ .image.tag }}{{ end }}"
+        volumeMounts:
+          - name: jwtsecret
+            mountPath: /jwtsecret
+            readOnly: true
+        args:
+          - {{ .Values.global.mode }}
+          - --l1.ws={{ .Values.global.l1Ws }}
+          - --l1.beacon={{ .Values.global.l1Beacon }}
+          - --l2.ws={{ .Values.global.l2Ws }}
+          - --l2.auth={{ .Values.global.l2Auth }}
+          - --taikoL1={{ (index .Values .Values.global.network).l1ContractAddresses.taikoL1 }}
+          - --taikoL2={{ (index .Values .Values.global.network).l2ContractAddresses.taikoL2 }}
+          - --jwtSecret=/jwtsecret/default
+          - --p2p.sync
+          - --p2p.checkPointSyncUrl={{ (index .Values .Values.global.network).checkpointUrl }}
+          - --verbosity=3
+        resources:
+          requests:
+            cpu: {{ .Values.global.resources.requests.cpu }}
+            memory: {{ .Values.global.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.global.resources.limits.cpu }}
+            memory: {{ .Values.global.resources.limits.memory }}

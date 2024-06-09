@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "taiko-node.name" -}}
+{{- define "taiko-client.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "taiko-node.fullname" -}}
+{{- define "taiko-client.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "taiko-node.chart" -}}
+{{- define "taiko-client.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "taiko-node.labels" -}}
-helm.sh/chart: {{ include "taiko-node.chart" . }}
-{{ include "taiko-node.selectorLabels" . }}
+{{- define "taiko-client.labels" -}}
+helm.sh/chart: {{ include "taiko-client.chart" . }}
+{{ include "taiko-client.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "taiko-node.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "taiko-node.name" . }}
+{{- define "taiko-client.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "taiko-client.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "taiko-node.serviceAccountName" -}}
+{{- define "taiko-client.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "taiko-node.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "taiko-client.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

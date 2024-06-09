@@ -1,0 +1,45 @@
+replicaCount: 1
+
+global:
+  network: hekla # options: [hekla, mainnet]
+  jwt: ecb22bc24e7d4061f7ed690ccd5846d7d73f5d2b9733267e12f56790398d908a # change this value
+  mode: driver # options: [driver, proposer, prover, guardian]
+  l1Ws: "ws://ethereum-node-holesky-execution:8545" # change this value if needed
+  l1Beacon: "http://ethereum-node-holesky-beacon:5052" # change this value if needed
+  l2Ws: "ws://taiko-geth-holesky:8546" # change this value if needed, eg: ws://localhost:8546
+  l2Auth: "http://taiko-geth-holesky:8551" # change this value if needed, eg: http://localhost:8551
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 500Mi
+
+hekla:
+  image:
+    repo: hekla
+    tag: sha-9a72cf0
+  l1ContractAddresses:
+    taikoL1: "0x79C9109b764609df928d16fC4a91e9081F7e87DB"
+    taikoToken: "0x6490E12d480549D333499236fF2Ba6676C296011"
+    guardianProverMinority: "0x31d4d27da5c299d4b6CE19c869B8891C0002795d"
+    guardianProverMajority: "0x92F195a8702da2104aE8E3E10779176E7C35d6BC"
+    assignmentHook: "0x9e640a6aadf4f664CF467B795c31332f44AcBe6c"
+  l2ContractAddresses:
+    taikoL2: "0x1670090000000000000000000000000000010001"
+  checkpointUrl: "https://rpc.hekla.taiko.xyz"
+
+mainnet:
+  image:
+    repo: images
+    tag: taiko-client-v0.25.0
+  l1ContractAddresses:
+    taikoL1: "0x06a9Ab27c7e2255df1815E6CC0168d7755Feb19a"
+    taikoToken: "0x10dea67478c5F8C5E2D90e5E9B26dBe60c54d800"
+    guardianProverMinority: "0x579A8d63a2Db646284CBFE31FE5082c9989E985c"
+    guardianProverMajority: "0xE3D777143Ea25A6E031d1e921F396750885f43aC"
+    assignmentHook: "0x537a2f0D3a5879b41BCb5A2afE2EA5c4961796F6"
+  l2ContractAddresses:
+    taikoL2: "0x1670000000000000000000000000000000010001"
+  checkpointUrl: "https://rpc.mainnet.taiko.xyz"

@@ -31,10 +31,9 @@ spec:
       volumes:
       - name: jwtsecret
         secret:
-          secretName: jwtsecret
+      secretName: jwtsecret
       containers:
-      #### Taiko node
-      - name: taiko
+      - name: taiko-geth
         image: "us-docker.pkg.dev/evmchain/{{ with (index .Values .Values.global.network) }}{{ .image.repo }}/taiko-geth:{{ .image.tag }}{{ end }}"
         imagePullPolicy: Always
         command:
