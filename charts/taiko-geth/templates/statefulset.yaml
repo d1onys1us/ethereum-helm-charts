@@ -96,6 +96,9 @@ spec:
           requests:
             cpu: {{ .Values.global.resources.requests.cpu }}
             memory: {{ .Values.global.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.global.resources.limits.cpu }}
+            memory: {{ .Values.global.resources.limits.memory }}
         env:
           - name: POD_IP
             valueFrom:
