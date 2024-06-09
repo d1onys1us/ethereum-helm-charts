@@ -6,8 +6,8 @@ global:
   mode: driver # options: [driver, proposer, prover, guardian]
   l1Ws: "ws://ethereum-node-holesky-execution:8545" # change this value if needed
   l1Beacon: "http://ethereum-node-holesky-beacon:5052" # change this value if needed
-  l2Ws: "ws://taiko-geth-holesky:8546" # change this value if needed, eg: ws://localhost:8546
-  l2Auth: "http://taiko-geth-holesky:8551" # change this value if needed, eg: http://localhost:8551
+  l2Ws: "ws://taiko-geth-hekla:8546" # change this value if needed, eg: ws://localhost:8546
+  l2Auth: "http://taiko-geth-hekla:8551" # change this value if needed, eg: http://localhost:8551
   resources:
     requests:
       cpu: 1000m

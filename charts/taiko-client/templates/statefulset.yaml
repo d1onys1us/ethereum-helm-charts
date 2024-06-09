@@ -12,16 +12,16 @@ spec:
   podManagementPolicy: Parallel
   selector:
     matchLabels:
-      app: taiko-client
+      {{- include "taiko-client.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: taiko-client
+        {{- include "taiko-client.labels" . | nindent 8 }}
     spec:
       volumes:
       - name: jwtsecret
         secret:
-        secretName: {{ include "taiko-client.fullname" . }}-jwt
+          secretName: {{ include "taiko-client.fullname" . }}-jwt
       containers:
       - name: {{ printf "taiko-client-%s" .Values.global.mode }}
         image: "us-docker.pkg.dev/evmchain/{{ with (index .Values .Values.global.network) }}{{ .image.repo }}/taiko-client:{{ .image.tag }}{{ end }}"

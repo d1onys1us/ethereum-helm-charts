@@ -12,7 +12,7 @@ spec:
   podManagementPolicy: Parallel
   selector:
     matchLabels:
-      app: taiko-geth
+      {{- include "taiko-geth.selectorLabels" . | nindent 6 }}
   volumeClaimTemplates:
   - metadata:
       name: taiko-data
@@ -26,12 +26,12 @@ spec:
   template:
     metadata:
       labels:
-        app: taiko-geth
+        {{- include "taiko-geth.labels" . | nindent 8 }}
     spec:
       volumes:
       - name: jwtsecret
         secret:
-      secretName: jwtsecret
+          secretName: {{ include "taiko-geth.fullname" . }}-jwt
       containers:
       - name: taiko-geth
         image: "us-docker.pkg.dev/evmchain/{{ with (index .Values .Values.global.network) }}{{ .image.repo }}/taiko-geth:{{ .image.tag }}{{ end }}"
@@ -110,12 +110,3 @@ spec:
           httpGet:
             path: /
             port: 8545
-        readinessProbe:
-          initialDelaySeconds: 30
-          periodSeconds: 5
-          failureThreshold: 3
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - "geth attach --datadir=/taiko/data --exec 'eth && !eth.syncing' | grep true"
