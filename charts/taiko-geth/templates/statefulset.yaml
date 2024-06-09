@@ -8,7 +8,7 @@ metadata:
     {{- toYaml .Values.annotations | nindent 4 }}
 spec:
   serviceName: taiko-geth
-  replicas: {{.Values.replicaCount}}
+  replicas: {{ .Values.replicaCount }}
   podManagementPolicy: Parallel
   selector:
     matchLabels:
@@ -17,12 +17,12 @@ spec:
   - metadata:
       name: taiko-data
     spec:
-      storageClassName: {{.Values.storage.className}}
+      storageClassName: {{ .Values.global.storage.className }}
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: {{.Values.storage.request}}
+          storage: {{ .Values.global.storage.request }}
   template:
     metadata:
       labels:
@@ -35,7 +35,7 @@ spec:
       containers:
       #### Taiko node
       - name: taiko
-        image: "us-docker.pkg.dev/evmchain/{{.Values.image.repo}}/taiko-geth:{{.Values.image.tag}}"
+        image: "us-docker.pkg.dev/evmchain/{{ with (index .Values .Values.global.network) }}{{ .image.repo }}/taiko-geth:{{ .image.tag }}{{ end }}"
         imagePullPolicy: Always
         command:
         - /bin/sh
@@ -74,9 +74,9 @@ spec:
             --authrpc.vhosts "*" \
             --discv5 \
             --allow-insecure-unlock \
-            --networkid={{.Values.network.id}} \
+            --networkid={{ (index .Values .Values.global.network).id }} \
             --nat "extip:$(POD_IP)" \
-            --bootnodes "{{.Values.network.bootnodes}}" \
+            --bootnodes "{{ (index .Values .Values.global.network).bootnodes }}" \
             --taiko 2>&1
         ports:
           - containerPort: 8545
@@ -94,8 +94,8 @@ spec:
             readOnly: true
         resources:
           requests:
-            cpu: {{.Values.resources.requests.cpu}}
-            memory: {{.Values.resources.requests.memory}}
+            cpu: {{ .Values.global.resources.requests.cpu }}
+            memory: {{ .Values.global.resources.requests.memory }}
         env:
           - name: POD_IP
             valueFrom:
