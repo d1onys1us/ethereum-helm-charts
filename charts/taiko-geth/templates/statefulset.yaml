@@ -42,20 +42,20 @@ spec:
         - |
           geth \
             --datadir=/taiko/data \
-            --port=30303 \
+            --port={{ .Values.global.ports.p2pPort }} \
             --http \
             --http.addr 0.0.0.0 \
-            --http.port 8545 \
+            --http.port {{ .Values.global.ports.httpPort }} \
             --http.vhosts "*" \
             --http.corsdomain "*" \
             --http.api net,eth,web3,txpool,debug,taiko \
             --ws \
             --ws.addr 0.0.0.0 \
-            --ws.port 8546 \
+            --ws.port {{ .Values.global.ports.wsPort }} \
             --ws.origins "*" \
             --ws.api eth,net,web3,txpool,debug,taiko \
             --metrics \
-            --metrics.port 6060 \
+            --metrics.port {{ .Values.global.ports.metricsPort }} \
             --metrics.addr 0.0.0.0 \
             --cache 4096 \
             --maxpeers 50 \
@@ -68,7 +68,7 @@ spec:
             --log.maxage 10 \
             --log.format logfmt \
             --authrpc.addr 0.0.0.0 \
-            --authrpc.port 8551 \
+            --authrpc.port {{ .Values.global.ports.authPort }} \
             --authrpc.jwtsecret /jwtsecret/default \
             --authrpc.vhosts "*" \
             --discv5 \
@@ -78,13 +78,20 @@ spec:
             --bootnodes "{{ (index .Values .Values.global.network).bootnodes }}" \
             --taiko 2>&1
         ports:
-          - containerPort: 8545
-          - containerPort: 8546
-          - containerPort: 8551
-          - containerPort: 6060
-          - containerPort: 30303
-          - containerPort: 30303
+          - name: ws-rpc
+            containerPort: {{ .Values.global.ports.wsPort }}
+          - name: http-rpc
+            containerPort: {{ .Values.global.ports.httpPort }}
+          - name: p2p-tcp
+            containerPort: {{ .Values.global.ports.p2pPort }}
+            protocol: TCP
+          - name: p2p-udp
+            containerPort: {{ .Values.global.ports.p2pPort }}
             protocol: UDP
+          - name: auth-rpc
+            containerPort: {{ .Values.global.ports.authPort }}
+          - name: metrics
+            containerPort: {{ .Values.global.ports.metricsPort }}
         volumeMounts:
           - name: taiko-data
             mountPath: /taiko/data

@@ -13,6 +13,12 @@ global:
     limits:
       cpu: 2000m
       memory: 4Gi
+  ports:
+    p2pPort: 30303
+    httpPort: 8545
+    wsPort: 8546
+    authPort: 8551
+    metricsPort: 6060
 
 hekla:
   image:
