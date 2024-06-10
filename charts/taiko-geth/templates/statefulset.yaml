@@ -116,4 +116,4 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 8545
+            port: {{ .Values.global.ports.httpPort }}
