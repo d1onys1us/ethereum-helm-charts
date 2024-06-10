@@ -1,6 +1,6 @@
 global:
   main:
-    network: holesky
+    network: mainnet 
     engineEndpoint: http://{{ .Release.Name }}-execution:8551
     rpcEndpoint: http://{{ .Release.Name }}-execution:8545
     beaconEndpoint: http://{{ .Release.Name }}-beacon:5052
@@ -141,7 +141,7 @@ ethereumjs:
       {{- end }}
 
 geth:
-  enabled: true
+  enabled: false
   nameOverride: execution
   httpPort: 8545
   p2pPort: 30303
@@ -215,7 +215,7 @@ grandine:
       {{- end -}}
 
 lighthouse:
-  enabled: true
+  enabled: false
   nameOverride: beacon
   httpPort: 5052
   p2pPort: 9000
