@@ -1,6 +1,6 @@
 global:
   main:
-    network: mainnet 
+    network: mainnet
     engineEndpoint: http://{{ .Release.Name }}-execution:8551
     rpcEndpoint: http://{{ .Release.Name }}-execution:8545
     beaconEndpoint: http://{{ .Release.Name }}-beacon:5052
