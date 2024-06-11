@@ -30,17 +30,18 @@ spec:
             mountPath: /jwtsecret
             readOnly: true
         args:
-          - {{ .Values.global.mode }}
-          - --l1.ws={{ .Values.global.l1Ws }}
-          - --l1.beacon={{ .Values.global.l1Beacon }}
-          - --l2.ws={{ .Values.global.l2Ws }}
-          - --l2.auth={{ .Values.global.l2Auth }}
-          - --taikoL1={{ (index .Values .Values.global.network).l1ContractAddresses.taikoL1 }}
-          - --taikoL2={{ (index .Values .Values.global.network).l2ContractAddresses.taikoL2 }}
-          - --jwtSecret=/jwtsecret/default
-          - --p2p.sync
-          - --p2p.checkPointSyncUrl={{ (index .Values .Values.global.network).checkpointUrl }}
-          - --verbosity=3
+          {{- $mode := index .Values .Values.global.mode }}
+          {{- range $arg := $mode.args }}
+          - {{ tpl $arg $ }}
+          {{- end }}
+        {{- if eq .Values.global.mode "guardian" }}
+        env:
+          - name: PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: guardian-prover-private-key
+                key: default
+        {{- end }}
         resources:
           requests:
             cpu: {{ .Values.global.resources.requests.cpu }}
