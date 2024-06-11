@@ -30,8 +30,12 @@ spec:
             mountPath: /jwtsecret
             readOnly: true
         args:
-          {{- $mode := index .Values .Values.global.mode }}
-          {{- range $arg := $mode.args }}
+          # Args for specific mode
+          {{- range $arg := (index .Values .Values.global.mode).args }}
+          - {{ tpl $arg $ }}
+          {{- end }}
+          # Default args
+          {{- range $arg := .Values.global.defaultClientArgs }}
           - {{ tpl $arg $ }}
           {{- end }}
         {{- if eq .Values.global.mode "guardian" }}

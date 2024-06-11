@@ -17,10 +17,8 @@ global:
     limits:
       cpu: 1000m
       memory: 500Mi
-
-driver:
-  args:
-    - driver
+  defaultClientArgs:
+    # Required flags
     - --l1.ws={{ .Values.global.l1Ws }}
     - --l1.beacon={{ .Values.global.l1Beacon }}
     - --l2.ws={{ .Values.global.l2Ws }}
@@ -28,30 +26,36 @@ driver:
     - --taikoL1={{ (index .Values .Values.global.network).l1ContractAddresses.taikoL1 }}
     - --taikoL2={{ (index .Values .Values.global.network).l2ContractAddresses.taikoL2 }}
     - --jwtSecret=/jwtsecret/default
+    # Optional flags
+    - --verbosity=3
+
+driver:
+  args:
+    - driver
     - --p2p.sync
     - --p2p.checkPointSyncUrl={{ (index .Values .Values.global.network).checkpointUrl }}
-    - --verbosity=3
 proposer:
-  args: []
+  args:
+    - proposer
 prover:
   args: []
 guardian:
   args:
-  - prover
-  - --mode.contester
-  - --l1.proverPrivKey=$(PRIVATE_KEY)
-  - --l1.http={{ .Values.global.l1Http }}
-  - --l2.http={{ .Values.global.l2Http }}
-  - --prover.guardianProverHealthCheckServerEndpoint={{ (index .Values .Values.global.network).guardian.healthCheckserver }}
-  - --taikoToken={{ (index .Values .Values.global.network).l1ContractAddresses.taikoToken }}
-  - --guardianProverMinority={{ (index .Values .Values.global.network).l1ContractAddresses.guardianProverMinority }}
-  - --guardianProverMajority={{ (index .Values .Values.global.network).l1ContractAddresses.guardianProverMajority }}
-  - --assignmentHookAddress={{ (index .Values .Values.global.network).l1ContractAddresses.assignmentHook }}
-  - --prover.capacity={{ (index .Values .Values.global.network).guardian.capacity }}
-  - --prover.proveUnassignedBlocks={{ (index .Values .Values.global.network).guardian.proveUnassignedBlocks }}
-  - --tx.gasLimit={{ (index .Values .Values.global.network).guardian.gasLimit }}
-  - --prover.l1NodeVersion="{{ (index .Values .Values.global.network).guardian.tag.l1ClClient) }}:{{ (index .Values .Values.global.network).guardian.tag.l1ClTag }}/{{ (index .Values .Values.global.network).guardian.tag.l1ElClient) }}:{{ (index .Values .Values.global.network).guardian.tag.l1ElTag }}"
-  - --prover.l2NodeVersion="driver:{{ (index .Values .Values.global.network).guardian.tag.l2DriverTag }}/taiko-geth:{{ (index .Values .Values.global.network).guardian.tag.l2ElTag }}/guardian:{{ (index .Values .Values.global.network).guardian.tag.l2GuardianTag }}"
+    - prover
+    - --mode.contester
+    - --l1.http={{ .Values.global.l1Http }}
+    - --l2.http={{ .Values.global.l2Http }}
+    - --taikoToken={{ (index .Values .Values.global.network).l1ContractAddresses.taikoToken }}
+    - --l1.proverPrivKey=$(PRIVATE_KEY)
+    - --prover.guardianProverHealthCheckServerEndpoint={{ (index .Values .Values.global.network).guardian.healthCheckserver }}
+    - --guardianProverMinority={{ (index .Values .Values.global.network).l1ContractAddresses.guardianProverMinority }}
+    - --guardianProverMajority={{ (index .Values .Values.global.network).l1ContractAddresses.guardianProverMajority }}
+    - --assignmentHookAddress={{ (index .Values .Values.global.network).l1ContractAddresses.assignmentHook }}
+    - --prover.capacity={{ (index .Values .Values.global.network).guardian.capacity }}
+    - --prover.proveUnassignedBlocks={{ (index .Values .Values.global.network).guardian.proveUnassignedBlocks }}
+    - --tx.gasLimit={{ (index .Values .Values.global.network).guardian.gasLimit }}
+    - --prover.l1NodeVersion="{{ (index .Values .Values.global.network).guardian.tag.l1ClClient) }}:{{ (index .Values .Values.global.network).guardian.tag.l1ClTag }}/{{ (index .Values .Values.global.network).guardian.tag.l1ElClient) }}:{{ (index .Values .Values.global.network).guardian.tag.l1ElTag }}"
+    - --prover.l2NodeVersion="driver:{{ (index .Values .Values.global.network).guardian.tag.l2DriverTag }}/taiko-geth:{{ (index .Values .Values.global.network).guardian.tag.l2ElTag }}/guardian:{{ (index .Values .Values.global.network).guardian.tag.l2GuardianTag }}"
 
 hekla:
   image:
