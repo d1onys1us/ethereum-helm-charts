@@ -1,13 +1,10 @@
-> [!NOTE]
 > This is a fork of [ethereum-helm-charts](https://github.com/ethpandaops/ethereum-helm-charts), with additional helm charts to easily deploy parts of Taiko's stack.
 
 # Taiko usage
 
-## Start a Taiko holesky node
-
-To start a Taiko full node:
-1. `helm dependency update ./charts/taiko-node`
-2. `helm install taiko-node ./charts/taiko-node`
+Start a Taiko full node:
+1. `helm repo add taiko-helm-charts https://d1onys1us.github.io/taiko-helm-charts`
+2. `helm install taiko-node taiko-helm-charts/taiko-node`
 
 # Ethereum Helm Charts
 
