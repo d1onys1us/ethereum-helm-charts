@@ -1,0 +1,11 @@
+name: Simple Echo Job
+
+on:
+  push:
+
+jobs:
+  echo_message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo a message
+        run: echo "Hello from GitHub Actions!"
